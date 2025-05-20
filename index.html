@@ -263,39 +263,21 @@
             color: white;
             z-index: 10;
         }
-        #mobile-controls {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 20px;
-            box-sizing: border-box;
-            z-index: 5;
-        }
+        #touch-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40%; /* גובה אזור המגע - 40% מהמסך */
+    z-index: 5;
+    display: flex;
+}
 
-        #mobile-controls button {
-            width: 70px;
-            height: 70px;
-            font-size: 30px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.5);
-            border: 2px solid #4CAF50;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            cursor: pointer;
-        }
-
-        /* הסתרת הכפתורים במחשב */
-        @media (min-width: 768px) {
-            #mobile-controls {
-                display: none;
-            }
-        }        
+#touch-left, #touch-right {
+    width: 50%;
+    height: 100%;
+    opacity: 0; /* שקיפות מלאה בשביל לא להסתיר את המשחק */
+}
     </style>
 </head>
 <body>
@@ -926,77 +908,56 @@
     <!-- קוד HTML קיים -->
     
     <!-- כפתורי שליטה למכשירים ניידים - הוסף את זה לפני סגירת the div#game-container -->
-    <div id="mobile-controls">
-        <button id="move-left">◀</button>
-        <button id="move-right">▶</button>
+    <div id="touch-controls">
+        <div id="touch-left"></div>
+        <div id="touch-right"></div>
     </div>
     <script>
-        // כל הקוד הקיים
-        
-        // אלמנטי שליטה במכשירים ניידים - הוסף זאת לאחר הגדרת כל האלמנטים האחרים
-        const moveLeftButton = document.getElementById('move-left');
-        const moveRightButton = document.getElementById('move-right');
+// אזורי לחיצה למכשירים ניידים
+const touchLeft = document.getElementById('touch-left');
+const touchRight = document.getElementById('touch-right');
 
-        // בגוף של window.addEventListener('load', function() {...}) הוסף:
-        window.addEventListener('load', function() {
-            // קוד קיים
-            
-            // טיפול באירועי מגע בכפתורים
-            if (moveLeftButton && moveRightButton) {
-                // נוסיף מאזיני אירועים לכפתור שמאל
-                moveLeftButton.addEventListener('touchstart', function(e) {
-                    e.preventDefault(); // מניעת התנהגות ברירת מחדל
-                    gameState.leftPressed = true;
-                });
-                
-                moveLeftButton.addEventListener('touchend', function(e) {
-                    e.preventDefault();
-                    gameState.leftPressed = false;
-                });
-                
-                // נוסיף מאזיני אירועים לכפתור ימין
-                moveRightButton.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                    gameState.rightPressed = true;
-                });
-                
-                moveRightButton.addEventListener('touchend', function(e) {
-                    e.preventDefault();
-                    gameState.rightPressed = false;
-                });
-                
-                // טיפול במקרה שהמשתמש מזיז את האצבע מחוץ לכפתור
-                document.addEventListener('touchcancel', function() {
-                    gameState.leftPressed = false;
-                    gameState.rightPressed = false;
-                });
-            }
-            
-            // תמיכה נוספת במחוות החלקה על המסך
-            document.addEventListener('touchmove', function(e) {
-                if (!gameState.gameRunning) return;
-                
-                const touch = e.touches[0];
-                const screenWidth = window.innerWidth;
-                
-                // אם המגע הוא בחצי השמאלי של המסך - זוז שמאלה
-                if (touch.clientX < screenWidth / 2) {
-                    gameState.leftPressed = true;
-                    gameState.rightPressed = false;
-                } 
-                // אם המגע הוא בחצי הימני של המסך - זוז ימינה
-                else {
-                    gameState.leftPressed = false;
-                    gameState.rightPressed = true;
-                }
-            });
-            
-            document.addEventListener('touchend', function() {
-                // עצירת התנועה כאשר המשתמש מרים את האצבע
-                gameState.leftPressed = false;
-                gameState.rightPressed = false;
-            });
-        });
+// בדיקה אם זה מכשיר נייד
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+if (isMobile && touchLeft && touchRight) {
+    // מאזיני אירועים לצד שמאל
+    touchLeft.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        gameState.leftPressed = true;
+        gameState.rightPressed = false;
+    });
+    
+    touchLeft.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        gameState.leftPressed = false;
+    });
+    
+    // מאזיני אירועים לצד ימין
+    touchRight.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        gameState.rightPressed = true;
+        gameState.leftPressed = false;
+    });
+    
+    touchRight.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        gameState.rightPressed = false;
+    });
+    
+    // עצירת תנועה כשמפסיקים לגעת במסך
+    document.addEventListener('touchcancel', function() {
+        gameState.leftPressed = false;
+        gameState.rightPressed = false;
+    });
+    
+    // מניעת תזוזת המסך כולו בעת משחק
+    document.body.addEventListener('touchmove', function(e) {
+        if (gameState.gameRunning) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+}
     </script>    
 </div>
 </body>
