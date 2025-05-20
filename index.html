@@ -263,21 +263,7 @@
             color: white;
             z-index: 10;
         }
-        #touch-controls {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 40%; /* גובה אזור המגע - 40% מהמסך */
-    z-index: 5;
-    display: flex;
-}
-
-#touch-left, #touch-right {
-    width: 50%;
-    height: 100%;
-    opacity: 0; /* שקיפות מלאה בשביל לא להסתיר את המשחק */
-}
+ 
     </style>
 </head>
 <body>
@@ -904,61 +890,56 @@
         player.style.left = gameState.playerPosition + 'px';
     });
 </script>
-<div id="game-container">
-    <!-- קוד HTML קיים -->
-    
-    <!-- כפתורי שליטה למכשירים ניידים - הוסף את זה לפני סגירת the div#game-container -->
-    <div id="touch-controls">
-        <div id="touch-left"></div>
-        <div id="touch-right"></div>
-    </div>
-    <script>
-// אזורי לחיצה למכשירים ניידים
-const touchLeft = document.getElementById('touch-left');
-const touchRight = document.getElementById('touch-right');
-
-// בדיקה אם זה מכשיר נייד
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-if (isMobile && touchLeft && touchRight) {
-    // מאזיני אירועים לצד שמאל
-    touchLeft.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        gameState.leftPressed = true;
-        gameState.rightPressed = false;
-    });
-    
-    touchLeft.addEventListener('touchend', function(e) {
-        e.preventDefault();
-        gameState.leftPressed = false;
-    });
-    
-    // מאזיני אירועים לצד ימין
-    touchRight.addEventListener('touchstart', function(e) {
-        e.preventDefault();
-        gameState.rightPressed = true;
-        gameState.leftPressed = false;
-    });
-    
-    touchRight.addEventListener('touchend', function(e) {
-        e.preventDefault();
-        gameState.rightPressed = false;
-    });
-    
-    // עצירת תנועה כשמפסיקים לגעת במסך
-    document.addEventListener('touchcancel', function() {
-        gameState.leftPressed = false;
-        gameState.rightPressed = false;
-    });
-    
-    // מניעת תזוזת המסך כולו בעת משחק
-    document.body.addEventListener('touchmove', function(e) {
-        if (gameState.gameRunning) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-}
-    </script>    
+<div style="position: absolute; bottom: 20px; left: 0; width: 100%; display: flex; justify-content: space-around; z-index: 100;">
+    <button id="btn-left" style="width: 100px; height: 50px; font-size: 24px; background: rgba(255,255,255,0.7); border: 2px solid #333;">←</button>
+    <button id="btn-right" style="width: 100px; height: 50px; font-size: 24px; background: rgba(255,255,255,0.7); border: 2px solid #333;">→</button>
 </div>
+<script>
+// הוסף את זה לחלק window.addEventListener('load', function() {})
+// אמור לעבוד טוב בכל סוגי המכשירים
+
+const btnLeft = document.getElementById('btn-left');
+const btnRight = document.getElementById('btn-right');
+
+if (btnLeft && btnRight) {
+    // כפתור שמאל - לחיצה
+    btnLeft.addEventListener('mousedown', function() {
+        gameState.leftPressed = true;
+    });
+    btnLeft.addEventListener('touchstart', function() {
+        gameState.leftPressed = true;
+    });
+    
+    // כפתור שמאל - שחרור
+    btnLeft.addEventListener('mouseup', function() {
+        gameState.leftPressed = false;
+    });
+    btnLeft.addEventListener('touchend', function() {
+        gameState.leftPressed = false;
+    });
+    btnLeft.addEventListener('mouseleave', function() {
+        gameState.leftPressed = false;
+    });
+    
+    // כפתור ימין - לחיצה
+    btnRight.addEventListener('mousedown', function() {
+        gameState.rightPressed = true;
+    });
+    btnRight.addEventListener('touchstart', function() {
+        gameState.rightPressed = true;
+    });
+    
+    // כפתור ימין - שחרור
+    btnRight.addEventListener('mouseup', function() {
+        gameState.rightPressed = false;
+    });
+    btnRight.addEventListener('touchend', function() {
+        gameState.rightPressed = false;
+    });
+    btnRight.addEventListener('mouseleave', function() {
+        gameState.rightPressed = false;
+    });
+}    
+</script>
 </body>
 </html>
