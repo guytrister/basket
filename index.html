@@ -890,56 +890,84 @@
         player.style.left = gameState.playerPosition + 'px';
     });
 </script>
-<div style="position: absolute; bottom: 20px; left: 0; width: 100%; display: flex; justify-content: space-around; z-index: 100;">
-    <button id="btn-left" style="width: 100px; height: 50px; font-size: 24px; background: rgba(255,255,255,0.7); border: 2px solid #333;">←</button>
-    <button id="btn-right" style="width: 100px; height: 50px; font-size: 24px; background: rgba(255,255,255,0.7); border: 2px solid #333;">→</button>
+<!-- כפתורי שליטה למכשירים ניידים -->
+<div style="position: fixed; bottom: 20px; left: 0; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 999;">
+    <button id="mobile-left" style="width: 80px; height: 80px; font-size: 40px; background-color: rgba(255, 255, 255, 0.7); border: 3px solid #333; border-radius: 10px;">&lt;</button>
+    <button id="mobile-right" style="width: 80px; height: 80px; font-size: 40px; background-color: rgba(255, 255, 255, 0.7); border: 3px solid #333; border-radius: 10px;">&gt;</button>
 </div>
 <script>
-// הוסף את זה לחלק window.addEventListener('load', function() {})
-// אמור לעבוד טוב בכל סוגי המכשירים
+// טיפול בכפתורי ניווט למובייל
+const mobileLeftBtn = document.getElementById('mobile-left');
+const mobileRightBtn = document.getElementById('mobile-right');
 
-const btnLeft = document.getElementById('btn-left');
-const btnRight = document.getElementById('btn-right');
-
-if (btnLeft && btnRight) {
+// אירועי לחיצה - כפתור שמאל
+if (mobileLeftBtn) {
     // כפתור שמאל - לחיצה
-    btnLeft.addEventListener('mousedown', function() {
+    mobileLeftBtn.ontouchstart = function(e) {
         gameState.leftPressed = true;
-    });
-    btnLeft.addEventListener('touchstart', function() {
-        gameState.leftPressed = true;
-    });
+        e.preventDefault(); // מניעת התנהגויות ברירת מחדל
+        return false;
+    };
     
     // כפתור שמאל - שחרור
-    btnLeft.addEventListener('mouseup', function() {
+    mobileLeftBtn.ontouchend = function(e) {
         gameState.leftPressed = false;
-    });
-    btnLeft.addEventListener('touchend', function() {
-        gameState.leftPressed = false;
-    });
-    btnLeft.addEventListener('mouseleave', function() {
-        gameState.leftPressed = false;
-    });
+        e.preventDefault();
+        return false;
+    };
     
+    // גיבוי לדפדפנים שונים - לחיצה
+    mobileLeftBtn.onmousedown = function(e) {
+        gameState.leftPressed = true;
+        e.preventDefault();
+        return false;
+    };
+    
+    // גיבוי לדפדפנים שונים - שחרור
+    mobileLeftBtn.onmouseup = mobileLeftBtn.onmouseleave = function(e) {
+        gameState.leftPressed = false;
+        e.preventDefault();
+        return false;
+    };
+}
+
+// אירועי לחיצה - כפתור ימין
+if (mobileRightBtn) {
     // כפתור ימין - לחיצה
-    btnRight.addEventListener('mousedown', function() {
+    mobileRightBtn.ontouchstart = function(e) {
         gameState.rightPressed = true;
-    });
-    btnRight.addEventListener('touchstart', function() {
-        gameState.rightPressed = true;
-    });
+        e.preventDefault();
+        return false;
+    };
     
     // כפתור ימין - שחרור
-    btnRight.addEventListener('mouseup', function() {
+    mobileRightBtn.ontouchend = function(e) {
         gameState.rightPressed = false;
-    });
-    btnRight.addEventListener('touchend', function() {
+        e.preventDefault();
+        return false;
+    };
+    
+    // גיבוי לדפדפנים שונים - לחיצה
+    mobileRightBtn.onmousedown = function(e) {
+        gameState.rightPressed = true;
+        e.preventDefault();
+        return false;
+    };
+    
+    // גיבוי לדפדפנים שונים - שחרור
+    mobileRightBtn.onmouseup = mobileRightBtn.onmouseleave = function(e) {
         gameState.rightPressed = false;
-    });
-    btnRight.addEventListener('mouseleave', function() {
-        gameState.rightPressed = false;
-    });
-}    
+        e.preventDefault();
+        return false;
+    };
+}
+
+// מניעת התנהגויות גלילה לא רצויות
+document.ontouchmove = function(e) {
+    if (gameState.gameRunning) {
+        e.preventDefault();
+    }
+};    
 </script>
 </body>
 </html>
